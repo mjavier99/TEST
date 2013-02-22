@@ -1,62 +1,45 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Acceleration Example</title>
+    <title>Ejemplo de Geolocation</title>
 
-    <script type="text/javascript" charset="utf-8" src="cordova-2.4.0.js"></script>
+    <script type="text/javascript" charset="utf-8" src="phonegap-1.0.0.js"></script>
     <script type="text/javascript" charset="utf-8">
 
-    // The watch id references the current `watchAcceleration`
-    var watchID = null;
-
-    // Wait for Cordova to load
+    // Espere a que PhoneGap se inicie
     //
     document.addEventListener("deviceready", onDeviceReady, false);
 
-    // Cordova is ready
+    // PhoneGap esta listo
     //
     function onDeviceReady() {
-        startWatch();
+        navigator.geolocation.getCurrentPosition(onSuccess, onError);
     }
 
-    // Start watching the acceleration
+    // onSuccess Geolocation
     //
-    function startWatch() {
-
-        // Update acceleration every 3 seconds
-        var options = { frequency: 3000 };
-
-        watchID = navigator.accelerometer.watchAcceleration(onSuccess, onError, options);
+    function onSuccess(position) {
+        var element = document.getElementById('geolocation');
+        element.innerHTML = 'Latitud: '           + position.coords.latitude              + '<br />' +
+          'Longitud: '        + position.coords.longitude         + '\n' +
+          'Altitud: '         + position.coords.altitude          + '\n' +
+          'Precisión: '       + position.coords.accuracy          + '\n' +
+          'Precisión altitud' + position.coords.altitudeAccuracy  + '\n' +
+          'Dirección: '       + position.coords.heading           + '\n' +
+          'Velocidad: '       + position.coords.speed             + '\n' +
+          'Timestamp: '       + new Date(position.timestamp)      + '\n');
     }
 
-    // Stop watching the acceleration
+    // La función 'callback' onError recibe un objeto `PositionError`.
     //
-    function stopWatch() {
-        if (watchID) {
-            navigator.accelerometer.clearWatch(watchID);
-            watchID = null;
-        }
-    }
-
-    // onSuccess: Get a snapshot of the current acceleration
-    //
-    function onSuccess(acceleration) {
-        var element = document.getElementById('accelerometer');
-        element.innerHTML = 'Acceleration X: ' + acceleration.x + '<br />' +
-                            'Acceleration Y: ' + acceleration.y + '<br />' +
-                            'Acceleration Z: ' + acceleration.z + '<br />' +
-                            'Timestamp: '      + acceleration.timestamp + '<br />';
-    }
-
-    // onError: Failed to get the acceleration
-    //
-    function onError() {
-        alert('onError!');
+    function onError(error) {
+        alert('código: '    + error.code    + '\n' +
+              'mensaje: ' + error.message + '\n');
     }
 
     </script>
   </head>
   <body>
-    <div id="accelerometer">Waiting for accelerometer...</div>
+    <p id="geolocation">Buscando geolocalización...</p>
   </body>
 </html>
